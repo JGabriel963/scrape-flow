@@ -5,13 +5,25 @@ import { Background, BackgroundVariant, Controls, ReactFlow, useEdgesState, useN
 import React from 'react'
 
 import '@xyflow/react/dist/style.css';
+import { CreateFlowNode } from '@/lib/workflow/createFlowNode';
+import { TaskType } from '@/types/task';
+import NodeComponent from './nodes/NodeComponent';
 
 interface Props {
     workflow: Workflow
 }
 
+const nodeTypes = {
+    FlowScrapeNode: NodeComponent
+}
+
+const snapGrid: [number, number] = [50, 50]
+const  fitViewOptions = { padding: 1 }
+
 export default function FlowEditor({ workflow }: Props) {
-    const [nodes, setNodes, onNodesChange] = useNodesState([])
+    const [nodes, setNodes, onNodesChange] = useNodesState([
+        CreateFlowNode(TaskType.LAUNCH_BROWSER)
+    ])
     const [edges, setEdges, onEdgesChange] = useEdgesState([])
 
   return (
@@ -21,8 +33,13 @@ export default function FlowEditor({ workflow }: Props) {
             edges={edges}
             onNodesChange={onNodesChange}
             onEdgesChange={onEdgesChange}
+            nodeTypes={nodeTypes}
+            snapToGrid
+            snapGrid={snapGrid}
+            fitViewOptions={fitViewOptions}
+            fitView
         >
-            <Controls position='top-left' />
+            <Controls position='top-left' fitViewOptions={fitViewOptions} />
             <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
         </ReactFlow>
     </main>
